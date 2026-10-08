@@ -1,10 +1,5 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import "jsr:@supabase/functions-js/edge-runtime.dts";
+import { corsHeaders, requireAuth, isAuthResult } from "../_shared/auth.ts";
 
 const HORIZON_URL = "https://horizon-testnet.stellar.org";
 
@@ -14,6 +9,11 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const auth = await requireAuth(req);
+    if (!isAuthResult(auth)) {
+      return auth;
+    }
+
     const { publicKey } = await req.json();
 
     if (!publicKey) {

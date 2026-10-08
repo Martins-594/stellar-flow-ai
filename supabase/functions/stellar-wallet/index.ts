@@ -1,11 +1,6 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import "jsr:@supabase/functions-js/edge-runtime.dts";
 import { Keypair } from "npm:@stellar/stellar-sdk@13";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders, requireAuth, isAuthResult } from "../_shared/auth.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -13,6 +8,11 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const auth = await requireAuth(req);
+    if (!isAuthResult(auth)) {
+      return auth;
+    }
+
     const { action, secretKey } = await req.json();
 
     if (action === "create") {

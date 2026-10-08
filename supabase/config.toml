@@ -1,1 +1,10 @@
 project_id = "wqdfsqabbzcgtrfbrwtx"
+
+[functions.stellar-send]
+verify_jwt = true
+
+[functions.stellar-wallet]
+verify_jwt = true
+
+[functions.stellar-balance]
+verify_jwt = true
